@@ -86,7 +86,8 @@ RSS、sitemap 与搜索索引，无需手工维护。
 
 ### 一次性设置
 
-1. 把本仓库推到 GitHub（私有仓库也可以）。
+1. 仓库已推送：`https://github.com/D77-jpg/sevn-ailab`（私有，默认分支 `main`）。
+   重新推送用 `git push origin main`；本仓库 `origin` 已配好。
 2. Cloudflare 控制台 → **Workers 和 Pages** → **创建** → **Pages** → **连接到 Git**，选择仓库。
 3. 构建设置：
 
