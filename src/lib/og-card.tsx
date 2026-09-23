@@ -1,28 +1,29 @@
+import { ImageResponse } from "next/og";
+
 import { OG_PALETTE as P } from "./og";
+import { OG_FONT_FAMILY, loadOgFonts } from "./og-font";
 import { site } from "./site";
 
-/** Name the subset font is registered under in `ImageResponse`. */
-export const OG_FONT_FAMILY = "Noto Serif SC";
+export const OG_SIZE = { width: 1200, height: 630 };
 
-export function OgCard({
-  kicker,
-  title,
-  subtitle,
-  meta,
-  cjk,
-}: {
-  /** Small mono label above the title — category, status, section. */
+type CardProps = {
+  /** Small label above the title — category, status, section. */
   kicker: string;
   title: string;
   /** Optional supporting line under the title. */
   subtitle?: string;
-  /** Bottom-left mono metadata. */
+  /** Bottom-left metadata. */
   meta: string;
-  /** False when the CJK subset couldn't be loaded: drop non-Latin text. */
-  cjk: boolean;
-}) {
-  const fontFamily = cjk ? OG_FONT_FAMILY : "sans-serif";
-  const heading = cjk ? title : latinFallback(title);
+};
+
+/**
+ * The share card. Mirrors the site's V3 look: #f5f5f7 canvas, the ink tile
+ * with the blue dot from the header mark, a big tight sans headline, one
+ * hairline above the footer. No gradients, no photos — it has to read at
+ * thumbnail size in a WeChat chat bubble.
+ */
+function OgCard({ kicker, title, subtitle, meta }: CardProps) {
+  const long = title.length > 20;
 
   return (
     <div
@@ -33,28 +34,28 @@ export function OgCard({
         flexDirection: "column",
         justifyContent: "space-between",
         background: P.paper,
-        padding: "68px 80px",
-        fontFamily,
+        padding: "64px 80px 56px",
+        fontFamily: OG_FONT_FAMILY,
       }}
     >
       {/* Brand */}
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <div
           style={{
-            width: 44,
-            height: 44,
+            width: 40,
+            height: 40,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: `1.5px solid ${P.lineStrong}`,
-            borderRadius: 10,
+            background: P.ink,
+            borderRadius: 11,
           }}
         >
           <div
             style={{
-              width: 14,
-              height: 14,
-              borderRadius: 3,
+              width: 12,
+              height: 12,
+              borderRadius: 999,
               background: P.accent,
             }}
           />
@@ -62,68 +63,59 @@ export function OgCard({
         <div
           style={{
             display: "flex",
-            fontSize: 30,
-            letterSpacing: -0.5,
+            fontSize: 28,
+            letterSpacing: -0.6,
             color: P.ink,
-            fontWeight: 600,
+            fontWeight: 700,
           }}
         >
           SEVN
-          <span style={{ color: P.faint, fontWeight: 400, marginLeft: 10 }}>
+          <span style={{ color: P.faint, fontWeight: 400, marginLeft: 9 }}>
             AILAB
           </span>
         </div>
       </div>
 
-      {/* Headline block */}
+      {/* Headline */}
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div
           style={{
             display: "flex",
-            width: 96,
-            height: 2,
-            background: P.accent,
-            marginBottom: 34,
-          }}
-        />
-        <div
-          style={{
-            display: "flex",
-            fontFamily: "monospace",
-            fontSize: 21,
-            letterSpacing: 2.4,
+            fontSize: 24,
+            fontWeight: 700,
+            letterSpacing: 0.5,
             color: P.accent,
             marginBottom: 22,
           }}
         >
-          {kicker.toUpperCase()}
+          {kicker}
         </div>
         <div
           style={{
             display: "flex",
-            fontSize: heading.length > 22 ? 62 : 80,
-            lineHeight: 1.14,
-            letterSpacing: -1.6,
+            fontSize: long ? 60 : 78,
+            lineHeight: 1.12,
+            letterSpacing: long ? -1.5 : -2.5,
             color: P.ink,
-            fontWeight: 600,
-            maxWidth: 1000,
+            fontWeight: 700,
+            maxWidth: 1040,
           }}
         >
-          {heading}
+          {title}
         </div>
         {subtitle && (
           <div
             style={{
               display: "flex",
-              marginTop: 26,
-              fontSize: 30,
-              lineHeight: 1.4,
+              marginTop: 24,
+              fontSize: 28,
+              lineHeight: 1.45,
               color: P.muted,
-              letterSpacing: -0.3,
-              maxWidth: 940,
+              fontWeight: 400,
+              maxWidth: 960,
             }}
           >
-            {subtitle}
+            {subtitle.length > 64 ? `${subtitle.slice(0, 62)}…` : subtitle}
           </div>
         )}
       </div>
@@ -135,26 +127,22 @@ export function OgCard({
           alignItems: "center",
           justifyContent: "space-between",
           borderTop: `1px solid ${P.line}`,
-          paddingTop: 26,
-          fontFamily: "monospace",
+          paddingTop: 24,
           fontSize: 21,
-          letterSpacing: 1.5,
+          letterSpacing: 1,
           color: P.faint,
+          fontWeight: 400,
         }}
       >
         <div style={{ display: "flex" }}>{meta}</div>
-        <div style={{ display: "flex" }}>{site.domain}</div>
+        <div style={{ display: "flex", color: P.ink2 }}>{site.domain}</div>
       </div>
     </div>
   );
 }
 
-/**
- * If the CJK font is unavailable, showing boxes is worse than showing nothing.
- * Fall back to the Latin parts of the string, and if there are none, to the
- * brand statement so the card still reads as intentional.
- */
-function latinFallback(title: string): string {
-  const latin = title.replace(/[^\x20-\x7E·]/g, "").replace(/\s+/g, " ").trim();
-  return latin.length >= 3 ? latin : site.tagline;
+/** Render a share card to PNG. Used by every `opengraph-image.tsx`. */
+export async function ogImage(props: CardProps) {
+  const fonts = await loadOgFonts();
+  return new ImageResponse(<OgCard {...props} />, { ...OG_SIZE, fonts });
 }

@@ -1,13 +1,20 @@
 import Link from "next/link";
 
 import { getCategory } from "@/lib/site";
-import { formatDate, type Post } from "@/lib/writing";
+import { formatDate } from "@/lib/format";
+import type { PostSummary } from "@/lib/writing";
 
 /**
  * A post rendered as a datasheet row: title + summary on the left, then
  * category / date / reading time in mono. Deliberately not a card.
  */
-export function PostRow({ post, index }: { post: Post; index?: number }) {
+export function PostRow({
+  post,
+  index,
+}: {
+  post: PostSummary;
+  index?: number;
+}) {
   const category = getCategory(post.category);
 
   return (

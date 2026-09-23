@@ -1,0 +1,16 @@
+# https://developers.cloudflare.com/pages/configuration/redirects/
+
+# Common feed / blog URLs people (and feed readers) guess
+/feed                /rss.xml          301
+/feed.xml            /rss.xml          301
+/rss                 /rss.xml          301
+/atom.xml            /rss.xml          301
+/blog                /writing          301
+/blog/*              /writing/:splat   301
+/posts/*             /writing/:splat   301
+
+# Share cards used to be served without an extension
+/opengraph-image                        /opengraph-image.png                        301
+/writing/:slug/opengraph-image          /writing/:slug/opengraph-image.png          301
+/projects/:slug/opengraph-image         /projects/:slug/opengraph-image.png         301
+/resources/:slug/opengraph-image        /resources/:slug/opengraph-image.png        301

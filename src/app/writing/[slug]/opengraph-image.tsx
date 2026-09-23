@@ -1,35 +1,18 @@
-import { ImageResponse } from "next/og";
-
-import { getAllPosts, getPost } from "@/lib/writing";
+import { ogImage, OG_SIZE } from "@/lib/og-card";
 import { getCategory } from "@/lib/site";
-import { loadOgFont } from "@/lib/og-font";
-import { OG_FONT_FAMILY, OgCard } from "@/lib/og-card";
+import { getAllPosts, getPost } from "@/lib/writing";
 
-export const size = { width: 1200, height: 630 };
+export const size = OG_SIZE;
 export const contentType = "image/png";
+// `generateImageMetadata` (per-page alt) is not supported by `output: "export"`.
+export const alt = "SEVN AILAB — 文章卡片";
+export const dynamic = "force-static";
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
 }
 
-export async function generateImageMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const post = getPost(slug);
-  return [
-    {
-      id: "default",
-      alt: post ? `${post.title} — SEVN AILAB` : "SEVN AILAB",
-      size,
-      contentType,
-    },
-  ];
-}
-
-/** `2026-09-14` -> `2026 · 09 · 14`. The middot is in the font subset. */
+/** `2026-09-14` -> `2026 · 09 · 14` */
 function spacedDate(iso: string): string {
   return iso.split("-").join(" · ");
 }
@@ -41,46 +24,15 @@ export default async function Image({
 }) {
   const { slug } = await params;
   const post = getPost(slug);
-  const font = await loadOgFont();
 
-  // generateStaticParams covers every real slug, so this is only reachable if
-  // a slug is renamed and the image route is hit before the next build.
   if (!post) {
-    return new ImageResponse(
-      (
-        <OgCard
-          kicker="NOT FOUND"
-          title="SEVN AILAB"
-          meta="BUILD WITH AI"
-          cjk={font !== null}
-        />
-      ),
-      {
-        ...size,
-        fonts: font
-          ? [{ name: OG_FONT_FAMILY, data: font, weight: 600, style: "normal" }]
-          : [],
-      },
-    );
+    return ogImage({ kicker: "NOT FOUND", title: "SEVN AILAB", meta: "BUILD WITH AI" });
   }
 
-  const category = getCategory(post.category);
-
-  return new ImageResponse(
-    (
-      <OgCard
-        kicker={category?.label ?? "WRITING"}
-        title={post.title}
-        subtitle={post.summary}
-        meta={`${spacedDate(post.date)}   /   ${post.readingMinutes} MIN READ`}
-        cjk={font !== null}
-      />
-    ),
-    {
-      ...size,
-      fonts: font
-        ? [{ name: OG_FONT_FAMILY, data: font, weight: 600, style: "normal" }]
-        : [],
-    },
-  );
+  return ogImage({
+    kicker: (getCategory(post.category)?.label ?? "WRITING").toUpperCase(),
+    title: post.title,
+    subtitle: post.summary,
+    meta: `${spacedDate(post.date)}   /   ${post.readingMinutes} MIN READ`,
+  });
 }

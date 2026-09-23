@@ -1,27 +1,39 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { getAllPosts } from "./writing";
 import { projects, statusMeta } from "./projects";
 import { getAllResources, resourceGroups } from "./resources";
 import { site } from "./site";
 
 /**
- * Font loading for generated OG images.
+ * Fonts for generated OG images.
  *
- * `@vercel/og` bundles exactly one font — `noto-sans-v27-latin-regular.ttf` —
- * so Chinese text has no glyphs and renders as tofu boxes on any machine
- * without a CJK system font (i.e. every Linux build/deploy target, including
- * Vercel). It happens to look fine on a Windows dev box, which is exactly how
- * this ships broken.
+ * `next/og` bundles a single Latin font, so without help every Chinese title
+ * renders as tofu on Linux build machines — Cloudflare's included.
  *
- * Fix: fetch a subset from Google Fonts covering only the characters our
- * content actually uses. The `text=` parameter returns a font containing just
- * those glyphs — ~36 KB for this site instead of 8 MB.
+ * Primary source is **vendored**: `assets/og/NotoSansSC-*.subset.otf`, a
+ * Noto Sans SC subset (GB2312 level-1, ~3,750 common hanzi + every character
+ * the site used when it was generated; see `scripts/subset-og-font.py`). It is
+ * read from disk at build time, so OG cards never depend on the network.
  *
- * Two things that matter and are easy to get wrong:
- *   1. Send **no** User-Agent. With a browser UA you get woff2 (satori can't
- *      read it); with an old-IE UA you get EOT. Node's default UA yields TTF.
- *   2. This font is only ever used server-side to rasterise a PNG. It is never
- *      sent to a browser, so its size is not a page-weight concern.
+ * Fallback: if a new post uses a rarer character the subset lacks, the missing
+ * glyphs — and only those — are fetched from Google Fonts. If that fails too,
+ * the build logs a loud warning instead of silently shipping tofu.
+ *
+ * These files rasterise PNGs at build time; they are never sent to browsers.
  */
+
+export const OG_FONT_FAMILY = "Noto Sans SC";
+
+type OgFont = {
+  name: string;
+  data: ArrayBuffer;
+  weight: 400 | 700;
+  style: "normal";
+};
+
+const ASSET_DIR = path.join(process.cwd(), "assets", "og");
 
 const STATIC_TEXT = [
   site.name,
@@ -31,120 +43,102 @@ const STATIC_TEXT = [
   site.author.role,
   "把想法做成真正能跑起来的产品。",
   site.core.join(" "),
-  "文章",
-  "项目",
-  "资源",
-  "资源记录",
+  "文章 项目 资源 资源记录 一个公开的 AI 实验室",
   ...Object.values(statusMeta).flatMap((s) => [s.label, s.note]),
   ...resourceGroups.map((g) => g.label),
 ].join(" ");
 
-/**
- * Punctuation the cards actually draw.
- *
- * `·` is U+00B7 and sits *outside* printable ASCII (32–126), so listing the
- * ASCII range is not enough: the homepage kicker is `site.core.join("  ·  ")`
- * and would render a tofu box in the middle of "AI · CODE · AGENT". Same trap
- * for the em dash and the CJK date units used in article footers.
- */
-const PUNCTUATION = "·—–…／｜|：·、，。年月日";
-
 /** Every character an OG card might need to draw. */
-export function ogCharset(): string {
+export function ogCharset(): Set<string> {
   const dynamic = [
-    ...getAllPosts().flatMap((p) => [p.title, p.summary, p.category]),
-    ...projects.flatMap((p) => [p.name, p.statusLabel]),
-    // Resource cards draw the tool name and its group. `use` is not drawn, but
-    // it is short and the extra glyphs cost almost nothing at this size.
-    ...getAllResources().flatMap((r) => [r.name, r.groupLabel]),
+    ...getAllPosts().flatMap((p) => [p.title, p.summary]),
+    ...projects.flatMap((p) => [p.name, p.statusLabel, p.summary]),
+    ...getAllResources().flatMap((r) => [r.name, r.groupLabel, r.use]),
   ].join(" ");
-
-  // Printable ASCII.
-  const ascii = Array.from({ length: 95 }, (_, i) =>
-    String.fromCharCode(32 + i),
-  ).join("");
-
-  return [
-    ...new Set((dynamic + " " + STATIC_TEXT + PUNCTUATION + ascii).split("")),
-  ].join("");
+  return new Set(Array.from(dynamic + STATIC_TEXT).filter((ch) => ch.trim()));
 }
 
-let cache: { key: string; font: ArrayBuffer | null } | null = null;
-
-/**
- * Returns a TTF containing every glyph the cards need, or `null` if it can't
- * be fetched — in which case callers must fall back to Latin-only text rather
- * than letting CJK render as boxes.
- */
-export async function loadOgFont(): Promise<ArrayBuffer | null> {
-  const charset = ogCharset();
-  if (cache?.key === charset) return cache.font;
-
-  const font = await fetchSubset(charset);
-  cache = { key: charset, font };
-  return font;
-}
-
-async function fetchSubset(charset: string): Promise<ArrayBuffer | null> {
-  const cssUrl =
-    "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&text=" +
-    encodeURIComponent(charset);
-
+function readBuffer(file: string): ArrayBuffer | null {
   try {
-    // Deliberately no User-Agent header — see the note above.
-    const cssRes = await fetch(cssUrl);
-    if (!cssRes.ok) {
-      warnDegraded(`css2 returned ${cssRes.status}`);
-      return null;
-    }
-
-    const css = await cssRes.text();
-    const url = css.match(/url\((https:[^)]+)\)/)?.[1];
-    if (!url) {
-      warnDegraded("no font url in the css response");
-      return null;
-    }
-
-    const fontRes = await fetch(url);
-    if (!fontRes.ok) {
-      warnDegraded(`font fetch returned ${fontRes.status}`);
-      return null;
-    }
-
-    const buf = await fontRes.arrayBuffer();
-    // Guard against silently getting woff2/eot back, which satori cannot parse
-    // and which would fail much later with a confusing error.
-    const magic = new DataView(buf).getUint32(0).toString(16);
-    if (magic !== "10000") {
-      warnDegraded(`unexpected font format (magic ${magic})`);
-      return null;
-    }
-
-    return buf;
-  } catch (err) {
-    warnDegraded(`fetch failed: ${(err as Error).message}`);
+    const buf = fs.readFileSync(path.join(ASSET_DIR, file));
+    return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+  } catch {
     return null;
   }
 }
 
-/**
- * Degrading quietly is how a Chinese site ends up shipping Latin-only share
- * cards: the build succeeds, the images look plausible, and nobody notices
- * until a link is pasted into a chat. Make it loud enough to see in CI logs.
- *
- * The fetch happens at build time (these routes are prerendered), so a build
- * environment without access to fonts.googleapis.com loses CJK here.
- */
-function warnDegraded(reason: string) {
+let cached: Promise<OgFont[]> | null = null;
+
+/** Resolved once per build process and shared by every OG route. */
+export function loadOgFonts(): Promise<OgFont[]> {
+  cached ??= resolveFonts();
+  return cached;
+}
+
+async function resolveFonts(): Promise<OgFont[]> {
+  const fonts: OgFont[] = [];
+
+  const bold = readBuffer("NotoSansSC-Bold.subset.otf");
+  const regular = readBuffer("NotoSansSC-Regular.subset.otf");
+  if (bold) fonts.push({ name: OG_FONT_FAMILY, data: bold, weight: 700, style: "normal" });
+  if (regular) fonts.push({ name: OG_FONT_FAMILY, data: regular, weight: 400, style: "normal" });
+
+  let covered = new Set<string>();
+  try {
+    covered = new Set(
+      Array.from(fs.readFileSync(path.join(ASSET_DIR, "charset.txt"), "utf8")),
+    );
+  } catch {
+    /* no charset file — treat everything as missing */
+  }
+
+  const missing = [...ogCharset()].filter(
+    (ch) => ch.charCodeAt(0) > 0x7e && !covered.has(ch),
+  );
+
+  if (!bold || missing.length > 0) {
+    const text = bold ? missing.join("") : [...ogCharset()].join("");
+    const extra = await fetchGoogleSubset(text);
+    if (extra) {
+      fonts.push({ name: OG_FONT_FAMILY, data: extra, weight: 700, style: "normal" });
+    } else if (missing.length) {
+      warn(`${missing.length} glyph(s) not in the vendored subset: ${missing.slice(0, 40).join("")}`);
+    }
+  }
+
+  return fonts;
+}
+
+async function fetchGoogleSubset(text: string): Promise<ArrayBuffer | null> {
+  const cssUrl =
+    "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@700&text=" +
+    encodeURIComponent(text);
+  try {
+    // No User-Agent on purpose: Node's default UA gets TTF, which satori reads.
+    const cssRes = await fetch(cssUrl, { signal: AbortSignal.timeout(8000) });
+    if (!cssRes.ok) return null;
+    const url = (await cssRes.text()).match(/url\((https:[^)]+)\)/)?.[1];
+    if (!url) return null;
+    const fontRes = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!fontRes.ok) return null;
+    const buf = await fontRes.arrayBuffer();
+    const magic = new DataView(buf).getUint32(0).toString(16);
+    return magic === "10000" || magic === "4f54544f" ? buf : null;
+  } catch {
+    return null;
+  }
+}
+
+function warn(reason: string) {
   console.warn(
     [
       "",
-      "┌────────────────────────────────────────────────────────────────┐",
-      "│ OG FONT DEGRADED — Chinese text will be omitted from OG cards  │",
-      "└────────────────────────────────────────────────────────────────┘",
-      `  reason: ${reason}`,
-      "  The cards still render, falling back to Latin-only text.",
-      "  Fix: allow build-time access to fonts.googleapis.com, then rebuild.",
+      "┌──────────────────────────────────────────────────────────────┐",
+      "│ OG FONT: some characters will render as boxes on share cards │",
+      "└──────────────────────────────────────────────────────────────┘",
+      `  ${reason}`,
+      "  Fix: run `python3 scripts/subset-og-font.py` to regenerate the subset,",
+      "  or allow build-time access to fonts.googleapis.com.",
       "",
     ].join("\n"),
   );

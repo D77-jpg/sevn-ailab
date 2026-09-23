@@ -116,15 +116,17 @@ export function getTagCounts(): { tag: string; count: number }[] {
     .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag));
 }
 
-/** "2026-09-14" -> "2026.09.14" — the datasheet-style date used across the UI. */
-export function formatDate(iso: string): string {
-  return iso.replace(/-/g, ".");
-}
+export { formatDate, formatDateLong } from "./format";
 
-/** "2026-09-14" -> "2026 年 9 月 14 日" */
-export function formatDateLong(iso: string): string {
-  const [y, m, d] = iso.split("-");
-  return `${y} 年 ${Number(m)} 月 ${Number(d)} 日`;
+/** The fields a list row needs — no body, so it is cheap to send to the client. */
+export type PostSummary = Pick<
+  Post,
+  "slug" | "title" | "summary" | "date" | "category" | "tags" | "readingMinutes"
+>;
+
+export function toSummary(post: Post): PostSummary {
+  const { slug, title, summary, date, category, tags, readingMinutes } = post;
+  return { slug, title, summary, date, category, tags: tags ?? [], readingMinutes };
 }
 
 export function categoryOf(post: Post) {

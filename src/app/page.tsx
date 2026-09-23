@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { PostRow, PostRowLegend } from "@/components/post-row";
@@ -6,7 +5,7 @@ import { ProjectRow } from "@/components/project-row";
 import { SectionHeader } from "@/components/ui";
 import { projects } from "@/lib/projects";
 import { resources, resourceGroups } from "@/lib/resources";
-import { site, socials } from "@/lib/site";
+import { externalProps, isLive, site, socials } from "@/lib/site";
 import { formatDate, getAllPosts } from "@/lib/writing";
 
 export default function HomePage() {
@@ -45,14 +44,29 @@ export default function HomePage() {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] overflow-hidden md:h-[700px]"
         >
-          <Image
-            src="/hero-desk.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="scale-[1.02] object-cover object-[42%_center] blur-[1.5px] md:object-center"
-          />
+          {/* Pre-encoded AVIF/WebP (scripts/optimize-images.mjs): a static
+              export has no image optimizer, and the raw JPEG was 185 KB. */}
+          <picture>
+            <source
+              type="image/avif"
+              srcSet="/hero-desk-828.avif 828w, /hero-desk-1672.avif 1672w"
+              sizes="100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet="/hero-desk-828.webp 828w, /hero-desk-1672.webp 1672w"
+              sizes="100vw"
+            />
+            <img
+              src="/hero-desk.jpg"
+              alt=""
+              width={1672}
+              height={941}
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 size-full scale-[1.02] object-cover object-[42%_center] blur-[1.5px] md:object-center"
+            />
+          </picture>
           <div
             className="absolute inset-0"
             style={{
@@ -282,25 +296,50 @@ export default function HomePage() {
           />
 
           <ul className="grid gap-px overflow-hidden border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-            {socials.map((s) => (
-              <li key={s.label} className="bg-paper">
-                <a
-                  href={s.href}
-                  {...(s.href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer noopener" }
-                    : {})}
-                  className="group flex h-full flex-col justify-between gap-6 p-6 transition-colors duration-200 hover:bg-surface"
-                >
+            {socials.map((s) => {
+              const body = (
+                <>
                   <div>
-                    <h3 className="text-[1.0625rem] font-medium text-ink transition-colors duration-200 group-hover:text-accent">
+                    <h3
+                      className={`flex items-baseline justify-between gap-3 text-[1.0625rem] font-medium transition-colors duration-200 ${
+                        isLive(s) ? "text-ink group-hover:text-accent" : "text-ink-2"
+                      }`}
+                    >
                       {s.label}
+                      {isLive(s) ? (
+                        <span
+                          aria-hidden
+                          className="text-[13px] text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-accent"
+                        >
+                          {s.href.startsWith("http") ? "↗" : "→"}
+                        </span>
+                      ) : (
+                        <span className="mono-xs">即将开通</span>
+                      )}
                     </h3>
                     <p className="mt-2 text-[14px] text-muted">{s.note}</p>
                   </div>
                   <span className="mono truncate">{s.handle}</span>
-                </a>
-              </li>
-            ))}
+                </>
+              );
+              const cls =
+                "group flex h-full flex-col justify-between gap-6 p-6";
+              return (
+                <li key={s.label} className="bg-paper">
+                  {isLive(s) ? (
+                    <a
+                      href={s.href}
+                      {...externalProps(s.href)}
+                      className={`${cls} transition-colors duration-200 hover:bg-surface`}
+                    >
+                      {body}
+                    </a>
+                  ) : (
+                    <div className={cls}>{body}</div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>

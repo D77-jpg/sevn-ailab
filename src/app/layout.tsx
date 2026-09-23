@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { GeistMono } from "geist/font/mono";
+import { GeistSans } from "geist/font/sans";
 
 import { JsonLd } from "@/components/json-ld";
 import { SiteHeader } from "@/components/site-header";
@@ -9,17 +10,13 @@ import { site } from "@/lib/site";
 
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-});
+/*
+ * Geist is self-hosted from the `geist` npm package (next/font/local under the
+ * hood) rather than `next/font/google`: the build never has to reach
+ * fonts.googleapis.com, so a Cloudflare build — or any CI without outbound
+ * access to Google — cannot fail or silently fall back on fonts.
+ * CSS variables: --font-geist-sans / --font-geist-mono (see globals.css).
+ */
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -80,7 +77,7 @@ export default function RootLayout({
     <html
       lang="zh-CN"
       suppressHydrationWarning
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

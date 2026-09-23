@@ -85,7 +85,7 @@ export default async function ResourcePage({
             >
               ←
             </span>
-            Resource Hub
+            资源库
           </Link>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3">

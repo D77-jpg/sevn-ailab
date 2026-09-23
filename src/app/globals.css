@@ -118,9 +118,9 @@
      property name so every existing `font-serif` usage picks up the new
      voice without touching the markup. */
   --font-serif: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    var(--font-geist), "Inter", "PingFang SC", "Hiragino Sans GB",
+    var(--font-geist-sans), "Inter", "PingFang SC", "Hiragino Sans GB",
     "Noto Sans SC", "Microsoft YaHei", sans-serif;
-  --font-sans: var(--font-geist), -apple-system, BlinkMacSystemFont,
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
     "SF Pro Text", "Inter", "Segoe UI", "PingFang SC", "Hiragino Sans GB",
     "Noto Sans SC", "Microsoft YaHei", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
+import { TocInline, TocSidebar } from "@/components/toc";
 import { renderMarkdown } from "@/lib/mdx";
 import { pageAlternates } from "@/lib/metadata";
 import { articleSchema, breadcrumbSchema } from "@/lib/schema";
@@ -136,28 +137,14 @@ export default async function PostPage({
               grid track is sized by the code blocks' intrinsic width, which
               blows the article out to ~660px on a 390px phone. */}
           <div className="grid grid-cols-[minmax(0,1fr)] gap-x-14 lg:grid-cols-[minmax(0,1fr)_13rem]">
-            <div className="prose min-w-0 max-w-[68ch]">{content}</div>
+            <div className="min-w-0 max-w-[68ch]">
+              {headings.length > 2 && <TocInline headings={headings} />}
+              <div className="prose">{content}</div>
+            </div>
 
             {headings.length > 2 && (
               <aside className="hidden lg:block">
-                <nav aria-label="本文目录" className="sticky top-28">
-                  <p className="mono-xs border-b border-line pb-3">目录</p>
-                  <ul className="mt-4 space-y-1">
-                    {headings.map((h) => (
-                      <li
-                        key={h.id}
-                        style={{ paddingLeft: h.depth === 3 ? "0.75rem" : 0 }}
-                      >
-                        <a
-                          href={`#${h.id}`}
-                          className="block py-1 text-[13px] leading-snug text-muted transition-colors duration-200 hover:text-accent"
-                        >
-                          {h.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+                <TocSidebar headings={headings} />
               </aside>
             )}
           </div>
@@ -170,11 +157,13 @@ export default async function PostPage({
           {post.tags && post.tags.length > 0 && (
             <ul className="flex flex-wrap gap-2 border-t border-line pt-8">
               {post.tags.map((tag) => (
-                <li
-                  key={tag}
-                  className="mono rounded-full border border-line px-3 py-1.5"
-                >
-                  {tag}
+                <li key={tag}>
+                  <Link
+                    href={`/writing?tag=${encodeURIComponent(tag)}`}
+                    className="mono inline-flex min-h-9 items-center rounded-full border border-line px-3 py-1.5 transition-colors duration-200 hover:border-line-strong hover:text-ink"
+                  >
+                    {tag}
+                  </Link>
                 </li>
               ))}
             </ul>

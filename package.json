@@ -4,12 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && node scripts/postbuild.mjs",
+    "preview": "npx --yes serve@14 out",
     "lint": "eslint",
-    "fonts": "node scripts/subset-font.mjs"
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm run build",
+    "images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
+    "geist": "^1.7.2",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "next": "15.5.25",
@@ -32,5 +35,8 @@
     "eslint-config-next": "15.5.25",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.9"
   }
 }

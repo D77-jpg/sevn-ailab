@@ -78,6 +78,22 @@ export const socials: SocialLink[] = [
   },
 ];
 
+/**
+ * A channel whose `href` is still the `#` placeholder is not live yet. Render
+ * it as plain text with a "即将开通" note instead of a link that scrolls the
+ * page to the top — a dead link reads as broken, an honest label does not.
+ */
+export function isLive(s: SocialLink): boolean {
+  return s.href !== "#" && s.href.trim() !== "";
+}
+
+/** `target`/`rel` for outbound links; nothing for mailto: and internal ones. */
+export function externalProps(href: string) {
+  return /^https?:\/\//.test(href)
+    ? { target: "_blank", rel: "noreferrer noopener" }
+    : {};
+}
+
 /** Category taxonomy for Writing. Slugs appear in `?c=` and in frontmatter. */
 export const categories = [
   {

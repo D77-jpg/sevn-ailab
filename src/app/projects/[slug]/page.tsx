@@ -7,7 +7,7 @@ import { SectionLabel, StatusPill } from "@/components/ui";
 import { pageAlternates } from "@/lib/metadata";
 import { getProject, projects } from "@/lib/projects";
 import { breadcrumbSchema, projectSchema } from "@/lib/schema";
-import { formatDate } from "@/lib/writing";
+import { formatDate } from "@/lib/format";
 
 type Params = { slug: string };
 
@@ -86,7 +86,7 @@ export default async function ProjectPage({
             >
               ←
             </span>
-            Projects / Lab
+            项目
           </Link>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-3">
@@ -146,7 +146,7 @@ export default async function ProjectPage({
         <div className="shell">
           <div className="grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
             <div className="bg-paper p-7 md:p-9">
-              <p className="eyebrow">目前能跑通</p>
+              <h3 className="eyebrow">目前能跑通</h3>
               <ul className="mt-6 space-y-4">
                 {project.works.map((item) => (
                   <li key={item} className="flex gap-3.5">
@@ -187,7 +187,7 @@ export default async function ProjectPage({
       {/* ── Log ──────────────────────────────────────────────────────── */}
       <section className="section pt-0">
         <div className="shell">
-          <SectionLabel index="02">Build Log</SectionLabel>
+          <SectionLabel index="02">开发日志</SectionLabel>
 
           <ol className="border-t border-line">
             {project.log.map((entry) => (

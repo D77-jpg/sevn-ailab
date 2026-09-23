@@ -5,7 +5,7 @@ import { PageHero, SectionLabel } from "@/components/ui";
 import { staticPageMetadata } from "@/lib/metadata";
 import { projects } from "@/lib/projects";
 import { breadcrumbSchema } from "@/lib/schema";
-import { site, socials } from "@/lib/site";
+import { externalProps, isLive, site, socials } from "@/lib/site";
 import { getAllPosts } from "@/lib/writing";
 
 export const metadata = staticPageMetadata({
@@ -353,7 +353,7 @@ export default function AboutPage() {
                   "TypeScript",
                   "Tailwind CSS",
                   "MDX",
-                  "Vercel",
+                  "Cloudflare Pages",
                 ].map((t) => (
                   <li
                     key={t}
@@ -374,18 +374,23 @@ export default function AboutPage() {
               <ul className="mt-6 space-y-3">
                 {socials.map((s) => (
                   <li key={s.label}>
-                    <a
-                      href={s.href}
-                      {...(s.href.startsWith("http")
-                        ? { target: "_blank", rel: "noreferrer noopener" }
-                        : {})}
-                      className="group flex items-baseline justify-between gap-4 border-b border-line pb-3"
-                    >
-                      <span className="text-[15px] text-ink-2 transition-colors duration-200 group-hover:text-accent">
-                        {s.label}
-                      </span>
-                      <span className="mono shrink-0">{s.handle}</span>
-                    </a>
+                    {isLive(s) ? (
+                      <a
+                        href={s.href}
+                        {...externalProps(s.href)}
+                        className="group flex items-baseline justify-between gap-4 border-b border-line pb-3"
+                      >
+                        <span className="text-[15px] text-ink-2 transition-colors duration-200 group-hover:text-accent">
+                          {s.label}
+                        </span>
+                        <span className="mono shrink-0">{s.handle}</span>
+                      </a>
+                    ) : (
+                      <div className="flex items-baseline justify-between gap-4 border-b border-line pb-3">
+                        <span className="text-[15px] text-muted">{s.label}</span>
+                        <span className="mono-xs shrink-0">即将开通</span>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>

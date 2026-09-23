@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { Project } from "@/lib/projects";
-import { formatDate } from "@/lib/writing";
+import { formatDate } from "@/lib/format";
 import { StatusPill } from "@/components/ui";
 
 /** A project rendered as a datasheet row — status and stack are the point. */

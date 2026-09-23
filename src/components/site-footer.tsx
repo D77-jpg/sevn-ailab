@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { BackToTop } from "@/components/back-to-top";
-import { categories, nav, site, socials } from "@/lib/site";
+import { categories, externalProps, isLive, nav, site, socials } from "@/lib/site";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -81,18 +81,23 @@ export function SiteFooter() {
           <ul className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
             {socials.map((s) => (
               <li key={s.label}>
-                <a
-                  href={s.href}
-                  {...(s.href.startsWith("http")
-                    ? { target: "_blank", rel: "noreferrer noopener" }
-                    : {})}
-                  className="group flex items-baseline justify-between gap-4 border-b border-line py-2.5"
-                >
-                  <span className="text-[14px] text-ink-2 transition-colors duration-200 group-hover:text-accent">
-                    {s.label}
-                  </span>
-                  <span className="mono-xs shrink-0 text-right">{s.note}</span>
-                </a>
+                {isLive(s) ? (
+                  <a
+                    href={s.href}
+                    {...externalProps(s.href)}
+                    className="group flex items-baseline justify-between gap-4 border-b border-line py-2.5"
+                  >
+                    <span className="text-[14px] text-ink-2 transition-colors duration-200 group-hover:text-accent">
+                      {s.label}
+                    </span>
+                    <span className="mono-xs shrink-0 text-right">{s.note}</span>
+                  </a>
+                ) : (
+                  <div className="flex items-baseline justify-between gap-4 border-b border-line py-2.5">
+                    <span className="text-[14px] text-muted">{s.label}</span>
+                    <span className="mono-xs shrink-0 text-right">即将开通</span>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
@@ -104,7 +109,7 @@ export function SiteFooter() {
             © {year} {site.name} · {site.domain}
           </p>
           <p className="mono-xs">
-            Next.js · TypeScript · Tailwind · MDX
+            Next.js · MDX · Cloudflare Pages
           </p>
           <BackToTop />
         </div>

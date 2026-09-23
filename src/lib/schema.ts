@@ -98,7 +98,7 @@ export function articleSchema(post: Post) {
     url,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     // Stable URL without the build-time cache-busting hash.
-    image: `${site.url}/writing/${post.slug}/opengraph-image/default`,
+    image: `${site.url}/writing/${post.slug}/opengraph-image.png`,
     datePublished: post.date,
     dateModified: post.date,
     inLanguage: "zh-CN",
@@ -120,7 +120,7 @@ export function projectSchema(project: Project) {
     name: project.name,
     description: project.summary,
     url,
-    image: `${site.url}/projects/${project.slug}/opengraph-image/default`,
+    image: `${site.url}/projects/${project.slug}/opengraph-image.png`,
     inLanguage: "zh-CN",
     creator: { "@id": `${site.url}/#person` },
     dateCreated: project.started,
