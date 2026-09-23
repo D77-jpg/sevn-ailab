@@ -1,0 +1,869 @@
+@import "tailwindcss";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SEVN AILAB — Minimal Tech Design System
+   Content-first, extreme restraint: warm-white canvas, near-black ink,
+   hairline borders, one accent blue, generous whitespace.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Manual + system theme switching. `data-theme` is set on <html> by an
+   inline script in layout.tsx, falling back to prefers-color-scheme. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ── Semantic tokens (light) ───────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+
+  /* Surfaces — warm near-white, Apple-style alternation between #f5f5f7
+     and pure white sections */
+  --paper: #f5f5f7;
+  --paper-deep: #fbfbfd;
+  --surface: #ffffff;
+  --surface-sunk: #f5f5f7;
+
+  /* Ink — neutral near-black. Four steps, every one clears 4.5:1 on the
+     darkest surface it is actually used on. */
+  --ink: #1d1d1f;
+  --ink-2: #3a3a3c;
+  --muted: #6e6e73;
+  --faint: #86868b;
+
+  /* Hairlines — 1px, low contrast, everywhere */
+  --line: #d2d2d7;
+  --line-strong: #aeaeb2;
+
+  /* Accent — Apple blue, the single saturated colour in the UI.
+     Used sparingly: links, the "AI." glyph, small focus moments. */
+  --accent: #0071e3;
+  --accent-hover: #0066cc;
+  --accent-soft: #e9f2fd;
+
+  /* Semantic status — only ever used on 6px dots and micro labels */
+  --st-ship: #248a3d;
+  --st-build: #9a5b00;
+  --st-res: #6e6e73;
+
+  /* Elevation — barely-there. Most surfaces carry no shadow at all. */
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-2: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 12px rgb(0 0 0 / 0.05);
+  --shadow-3: 0 2px 6px rgb(0 0 0 / 0.05), 0 12px 32px rgb(0 0 0 / 0.08);
+  --shadow-4: 0 4px 12px rgb(0 0 0 / 0.06), 0 24px 56px rgb(0 0 0 / 0.1);
+
+  /* Body copy line-height — bumped slightly in dark mode (see below) */
+  --leading-body: 1.75;
+}
+
+/* ── Semantic tokens (dark) ────────────────────────────────────────────── */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Apple dark: true black canvas, hierarchy through surface lightness */
+  --paper: #000000;
+  --paper-deep: #0c0c0e;
+  --surface: #161617;
+  /* Darker than the page, so code reads as recessed — and it lifts syntax
+     colours back above AA against the code surface. */
+  --surface-sunk: #000000;
+
+  --ink: #f5f5f7;
+  --ink-2: #d6d6da;
+  --muted: #a1a1a6;
+  --faint: #86868b;
+
+  --line: #38383a;
+  --line-strong: #4e4e52;
+
+  --accent: #2997ff;
+  --accent-hover: #4da6ff;
+  --accent-soft: rgb(41 151 255 / 0.14);
+
+  --st-ship: #30d158;
+  --st-build: #ffd60a;
+  --st-res: #98989d;
+
+  /* Dark mode expresses hierarchy through surface lightness, not shadow */
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-2: 0 2px 6px rgb(0 0 0 / 0.28), 0 8px 22px rgb(0 0 0 / 0.22);
+  --shadow-3: 0 2px 6px rgb(0 0 0 / 0.3), 0 12px 30px rgb(0 0 0 / 0.26);
+  --shadow-4: 0 2px 6px rgb(0 0 0 / 0.34), 0 18px 44px rgb(0 0 0 / 0.3);
+
+  --leading-body: 1.81;
+}
+
+/* ── Map semantic tokens into Tailwind's theme ─────────────────────────── */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-surface: var(--surface);
+  --color-surface-sunk: var(--surface-sunk);
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-ship: var(--st-ship);
+  --color-build: var(--st-build);
+  --color-res: var(--st-res);
+
+  /* Display type is the sans stack: SF Pro on Apple platforms, Geist
+     elsewhere, PingFang SC for Chinese. Kept on the --font-serif custom
+     property name so every existing `font-serif` usage picks up the new
+     voice without touching the markup. */
+  --font-serif: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    var(--font-geist), "Inter", "PingFang SC", "Hiragino Sans GB",
+    "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-sans: var(--font-geist), -apple-system, BlinkMacSystemFont,
+    "SF Pro Text", "Inter", "Segoe UI", "PingFang SC", "Hiragino Sans GB",
+    "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
+    "Cascadia Code", Consolas, monospace;
+
+  /* Fluid display scale — big, tight, semibold. Apple-style negative
+     tracking: the larger the type, the tighter it sets. */
+  --text-display: clamp(3.5rem, 1.2rem + 6.5vw, 6rem);
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.045em;
+  --text-display--font-weight: 600;
+
+  --text-h1: clamp(2.25rem, 1.4rem + 3vw, 3.5rem);
+  --text-h1--line-height: 1.07;
+  --text-h1--letter-spacing: -0.035em;
+  --text-h1--font-weight: 600;
+
+  --text-h2: clamp(1.7rem, 1.25rem + 1.8vw, 2.5rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.028em;
+  --text-h2--font-weight: 600;
+
+  --text-h3: clamp(1.2rem, 1.06rem + 0.55vw, 1.4rem);
+  --text-h3--line-height: 1.28;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 600;
+
+  --text-lead: clamp(1.0625rem, 1rem + 0.4vw, 1.3125rem);
+  --text-lead--line-height: 1.6;
+  --text-lead--letter-spacing: -0.01em;
+
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.4;
+  --text-meta--letter-spacing: 0.06em;
+
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.3;
+  --text-micro--letter-spacing: 0.12em;
+
+  /* Restrained radii — pills for buttons/inputs, modest rounding for panels */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Offset in-page anchors so the sticky header never covers a heading */
+    scroll-padding-top: 6.5rem;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: var(--leading-body);
+    font-kerning: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* No grain, no texture — the canvas stays flat and quiet. */
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+    color: var(--accent-hover);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* Code never ligates — `=>` must stay `=>` */
+  code,
+  kbd,
+  pre,
+  samp {
+    font-variant-ligatures: none;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
+/* ── Components ────────────────────────────────────────────────────────── */
+@layer components {
+  /* Layout shell -------------------------------------------------------- */
+  .shell {
+    width: 100%;
+    max-width: 1140px;
+    margin-inline: auto;
+    padding-inline: 22px;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 32px;
+    }
+  }
+
+  /* Vertical rhythm for every page section — generous air between blocks */
+  .section {
+    padding-block: clamp(4rem, 9vw, 7.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  /* Eyebrow / kicker ---------------------------------------------------- */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+
+  /* Section header — the signature rule that opens every block ---------- */
+  .rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .rule::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    /* The rule draws itself in from the index marker — a small printing-press
+       moment that gives every section a deliberate opening. Completes in well
+       under a second and stays put; below-fold rules simply finish off-screen. */
+    animation: draw-line 0.9s var(--ease-out-expo) both;
+    transform-origin: left;
+  }
+
+  @keyframes draw-line {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  /* Mono metadata ------------------------------------------------------- */
+  .mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mono-xs {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Status pill --------------------------------------------------------- */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    flex: none;
+  }
+
+  .status[data-state="shipped"] {
+    color: var(--st-ship);
+    background: color-mix(in oklab, var(--st-ship) 9%, transparent);
+  }
+  .status[data-state="building"] {
+    color: var(--st-build);
+    background: color-mix(in oklab, var(--st-build) 9%, transparent);
+  }
+
+  /* A thing that is building is alive — the dot breathes. Only this state
+     pulses; shipped is settled, research is quiet. */
+  .status[data-state="building"]::before {
+    animation: pulse-dot 2.4s var(--ease-out-quart) infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.45;
+      transform: scale(0.82);
+    }
+  }
+  .status[data-state="research"] {
+    color: var(--st-res);
+    background: color-mix(in oklab, var(--st-res) 9%, transparent);
+  }
+
+  /* Buttons — Apple-style pills. No shadows, hover is a whisper. -------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 46px;
+    padding: 0 1.375rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition:
+      background-color 0.25s var(--ease-out-quart),
+      border-color 0.25s var(--ease-out-quart),
+      color 0.25s var(--ease-out-quart),
+      transform 0.25s var(--ease-out-quart);
+  }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--ink-2);
+    transform: scale(1.015);
+  }
+  .btn-primary:active {
+    transform: scale(0.99);
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    border-color: var(--line-strong);
+    color: var(--ink);
+  }
+  .btn-secondary:hover {
+    background: var(--paper);
+    border-color: var(--faint);
+    transform: scale(1.015);
+  }
+  .btn-secondary:active {
+    transform: scale(0.99);
+  }
+
+  .btn-ghost {
+    color: var(--accent);
+    padding-inline: 0;
+    min-height: 32px;
+  }
+  .btn-ghost:hover {
+    color: var(--accent-hover);
+  }
+
+  /* Underline that wipes in from the left — used on inline links */
+  .link-wipe {
+    position: relative;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .link-wipe::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 100%;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s var(--ease-out-quart);
+  }
+  .link-wipe:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Card — flat, hairline-bounded. Elevation appears only on hover. ------ */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    transition:
+      border-color 0.22s var(--ease-out-quart),
+      box-shadow 0.22s var(--ease-out-quart),
+      transform 0.22s var(--ease-out-quart);
+  }
+
+  .card-hover:hover {
+    border-color: var(--line-strong);
+    box-shadow: var(--shadow-2);
+    transform: translateY(-2px);
+  }
+
+  /* Entrance ------------------------------------------------------------ */
+  /* One-shot, above-the-fold only. Scroll-triggered reveals are deliberately
+     avoided — they add JS and delay content the visitor already asked for. */
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .rise {
+    animation: rise 0.75s var(--ease-out-expo) both;
+  }
+
+  /* Spec row — the "engineering datasheet" list primitive --------------- */
+  .spec-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem 1.25rem;
+    padding: 1.125rem 1rem 1.125rem 0.875rem;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.2s var(--ease-out-quart);
+  }
+
+  .spec-row::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 0.25s var(--ease-out-quart);
+  }
+
+  .spec-row:hover {
+    background: var(--surface);
+  }
+
+  .spec-row:hover::before {
+    transform: scaleY(1);
+  }
+
+  /* The title leans into the row on hover — 3px, nothing more. */
+  .spec-row h3 {
+    transition:
+      color 0.2s var(--ease-out-quart),
+      transform 0.25s var(--ease-out-quart);
+  }
+
+  .spec-row:hover h3 {
+    transform: translateX(3px);
+  }
+
+  @media (min-width: 768px) {
+    .spec-row {
+      grid-template-columns: minmax(0, 1fr) 11.5rem 10rem 5.5rem;
+      align-items: baseline;
+      padding-inline: 0.875rem 1rem;
+    }
+  }
+
+  /* Prose --------------------------------------------------------------- */
+  .prose {
+    font-size: 1.0625rem;
+    line-height: var(--leading-body);
+    color: var(--ink-2);
+    /* Long identifiers, URLs and inline code must never push the page wide. */
+    overflow-wrap: break-word;
+  }
+
+  .prose > * + * {
+    margin-top: 1.35em;
+  }
+
+  /* The lede: the first paragraph of an article carries the contract with the
+     reader, so it gets a half-step up in size and full ink. */
+  .prose > p:first-of-type {
+    font-size: 1.1875rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+
+  .prose h2 {
+    margin-top: 2.6em;
+    margin-bottom: 0.7em;
+    font-size: var(--text-h2);
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .prose h3 {
+    margin-top: 2em;
+    margin-bottom: 0.6em;
+    font-size: var(--text-h3);
+    line-height: 1.3;
+    letter-spacing: -0.012em;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .prose h4 {
+    margin-top: 1.8em;
+    margin-bottom: 0.5em;
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .prose p,
+  .prose li {
+    text-wrap: pretty;
+  }
+
+  .prose strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.18s var(--ease-out-quart);
+  }
+
+  .prose a:hover {
+    color: var(--accent-hover);
+    text-decoration-thickness: 2px;
+  }
+
+  .prose ul,
+  .prose ol {
+    padding-left: 1.35em;
+  }
+
+  .prose ul {
+    list-style: none;
+  }
+
+  .prose ul > li {
+    position: relative;
+    padding-left: 0.35em;
+  }
+
+  .prose ul > li::before {
+    content: "";
+    position: absolute;
+    left: -1em;
+    top: 0.72em;
+    width: 5px;
+    height: 1px;
+    background: var(--faint);
+  }
+
+  .prose ol {
+    list-style: decimal;
+  }
+
+  .prose ol > li::marker {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--faint);
+  }
+
+  .prose li + li {
+    margin-top: 0.4em;
+  }
+
+  .prose blockquote {
+    margin-inline: 0;
+    padding: 0.25em 0 0.25em 1.25em;
+    border-left: 2px solid var(--accent);
+    font-family: var(--font-serif);
+    font-size: 1.1875rem;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .prose blockquote p {
+    margin: 0;
+  }
+
+  .prose img {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    width: 100%;
+    height: auto;
+  }
+
+  /* Inline code — only inside prose, never on headings */
+  .prose :not(pre) > code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-xs);
+    background: var(--surface-sunk);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    /* Deliberately NOT nowrap: a long identifier like
+       `answer_availability_question` would otherwise overflow the page on
+       narrow screens. Break-word keeps short tokens intact and only splits
+       when there is genuinely no other option. */
+    overflow-wrap: break-word;
+  }
+
+  .prose pre {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1.125rem 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.84375rem;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+
+  .prose pre code {
+    font-family: inherit;
+    font-size: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+
+  .prose table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+  }
+
+  .prose th,
+  .prose td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+  }
+
+  .prose th {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    font-weight: 500;
+  }
+
+  .prose tbody tr {
+    transition: background-color 0.18s var(--ease-out-quart);
+  }
+
+  .prose tbody tr:hover {
+    background: var(--surface);
+  }
+
+  .prose hr {
+    margin-block: 3em;
+  }
+
+  /* Heading anchor on hover */
+  .prose :is(h2, h3, h4) {
+    scroll-margin-top: 6.5rem;
+  }
+
+  /* Code block frame ---------------------------------------------------- */
+  .code-frame {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface-sunk);
+    overflow: hidden;
+    /* Keeps a long line from widening its ancestor grid/flex track. */
+    min-width: 0;
+  }
+
+  .code-frame__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0.5rem 0.25rem 1rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .code-frame__bar button {
+    min-height: 32px;
+  }
+
+  /* Shiki dual themes --------------------------------------------------- */
+  /* Both palettes are emitted as inline custom properties by Shiki, so the
+     switch is pure CSS — no re-render, no hydration cost. */
+  [data-theme="dark"] .code-frame pre,
+  [data-theme="dark"] .code-frame pre span {
+    color: var(--shiki-dark) !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+
+  /* Heading anchors ----------------------------------------------------- */
+  .prose .heading-anchor {
+    /* Vertical padding enlarges the hit area without moving the baseline —
+       inline boxes don't contribute their padding to line height. min-width
+       guarantees the 24px WCAG 2.5.8 floor even when the anchor renders at
+       a small font-size inside a low-level heading. */
+    display: inline-block;
+    min-width: 24px;
+    text-align: center;
+    margin-left: 0.25em;
+    padding: 0.4em 0.3em;
+    font-family: var(--font-mono);
+    font-size: 0.55em;
+    font-weight: 400;
+    color: var(--faint);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.2s var(--ease-out-quart);
+  }
+
+  .prose :is(h2, h3, h4):hover .heading-anchor,
+  .prose .heading-anchor:focus-visible {
+    opacity: 1;
+  }
+
+  .prose .heading-anchor:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* ── Accent moments ─────────────────────────────────────────────────── */
+
+  /* The single blue word inside display type. Never applied to CJK runs. */
+  .em-serif {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  /* Reading progress — a 2px accent rule living on the header's bottom edge.
+     Width is driven by a custom property set from JS; transform keeps it
+     compositor-only. */
+  .scroll-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(var(--progress, 0));
+    /* No transition: it tracks scroll 1:1, and lag reads as jank. */
+  }
+
+  /* Oversized wordmark that closes the footer. Rendered as a faint ink
+     tint so it reads as quiet brand furniture, not as a heading competing
+     with the content above it. */
+  .wordmark {
+    font-family: var(--font-serif);
+    font-size: clamp(3.25rem, 12.5vw, 9.5rem);
+    font-weight: 700;
+    line-height: 0.96;
+    letter-spacing: -0.055em;
+    white-space: nowrap;
+    color: color-mix(in oklab, var(--ink) 12%, transparent);
+    user-select: none;
+  }
+
+  .wordmark em {
+    font-style: normal;
+    color: color-mix(in oklab, var(--accent) 30%, transparent);
+  }
+
+  /* Mobile drawer links stagger in when the drawer opens. The animation is
+     re-triggered by the [hidden] toggle because display:none → block
+     restarts CSS animations — no JS choreography needed. */
+  .drawer-item {
+    animation: rise 0.5s var(--ease-out-expo) both;
+  }
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
