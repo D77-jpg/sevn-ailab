@@ -1,4 +1,4 @@
-# https://developers.cloudflare.com/pages/configuration/redirects/
+# https://developers.cloudflare.com/workers/static-assets/redirects/
 
 # Common feed / blog URLs people (and feed readers) guess
 /feed                /rss.xml          301
