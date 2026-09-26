@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import type { ProjectStatus } from "@/lib/projects";
+/** Lifecycle states shared by both sites (projects on AILAB, articles on GRADLAB). */
+export type StatusState = "shipped" | "building" | "research";
 
 /**
  * The hairline section label (`01 / WRITING ────────`).
@@ -102,7 +103,7 @@ export function StatusPill({
   state,
   label,
 }: {
-  state: ProjectStatus;
+  state: StatusState;
   label: string;
 }) {
   return (

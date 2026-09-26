@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { JsonLd } from "@/components/json-ld";
 import { Rating } from "@/components/rating";
-import { PageHero, SectionLabel } from "@/components/ui";
+import { PageHero, SectionLabel } from "@sevn/ui";
 import { staticPageMetadata } from "@/lib/metadata";
 import { resourceGroups, resources } from "@/lib/resources";
 import { breadcrumbSchema } from "@/lib/schema";

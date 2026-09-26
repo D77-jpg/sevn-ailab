@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { JsonLd } from "@/components/json-ld";
-import { PageHero, SectionLabel } from "@/components/ui";
+import { PageHero, SectionLabel } from "@sevn/ui";
 import { staticPageMetadata } from "@/lib/metadata";
 import { projects } from "@/lib/projects";
 import { breadcrumbSchema } from "@/lib/schema";

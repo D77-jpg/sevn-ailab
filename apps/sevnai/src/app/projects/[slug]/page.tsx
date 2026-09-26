@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
-import { SectionLabel, StatusPill } from "@/components/ui";
+import { SectionLabel, StatusPill } from "@sevn/ui";
 import { pageAlternates } from "@/lib/metadata";
 import { getProject, projects } from "@/lib/projects";
 import { breadcrumbSchema, projectSchema } from "@/lib/schema";

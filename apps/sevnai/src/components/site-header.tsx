@@ -6,18 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { nav, site, socials } from "@/lib/site";
 import { SearchDialog } from "@/components/search";
-import { ThemeToggle } from "@/components/theme-toggle";
-
-function Mark() {
-  return (
-    <span
-      aria-hidden
-      className="relative grid size-[20px] shrink-0 place-items-center rounded-[6px] bg-ink"
-    >
-      <span className="block size-[6px] rounded-full bg-accent" />
-    </span>
-  );
-}
+import { Mark, ThemeToggle } from "@sevn/ui";
 
 export function SiteHeader() {
   const pathname = usePathname();

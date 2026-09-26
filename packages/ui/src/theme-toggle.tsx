@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "sevn-theme";
+import { THEME_STORAGE_KEY as STORAGE_KEY } from "./theme-script";
 
 type Theme = "light" | "dark";
 

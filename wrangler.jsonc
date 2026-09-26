@@ -1,5 +1,10 @@
 {
-  // 本站是 Next.js 的纯静态导出（next.config.ts → output: "export"），产物在 out/。
+  // sevnai.site 的部署配置。仓库已改为 monorepo：站点源码在 apps/sevnai/，
+  // 它是 Next.js 纯静态导出（apps/sevnai/next.config.ts → output: "export"），
+  // 产物在 apps/sevnai/out/。
+  //
+  // 本文件刻意留在仓库根目录：Cloudflare 的构建设置（根目录 /、构建命令、部署命令）
+  // 因此一项都不用改——根目录 package.json 的 build 脚本只构建 sevnai。
   //
   // 这个文件的作用是「告诉 wrangler 只发布静态资源」，必须保留：
   // 没有它时，`wrangler deploy` 会检测到仓库里有 Next.js，自动去跑
@@ -9,12 +14,13 @@
   // 有 wrangler 配置时不会走那条自动配置路径。
   //
   // 构建机（Cloudflare Workers Builds）设置：
-  //   构建命令   npm run build      → 产出 out/
-  //   部署命令   npx wrangler deploy → 读本文件，仅上传 out/
+  //   根目录     /（保持默认，不要改成 apps/sevnai）
+  //   构建命令   npm run build      → 只构建 sevnai，产出 apps/sevnai/out/
+  //   部署命令   npx wrangler deploy → 读本文件，仅上传 apps/sevnai/out/
   "name": "sevn-ailab",
   "compatibility_date": "2026-09-23",
   "assets": {
-    "directory": "./out",
+    "directory": "./apps/sevnai/out",
     // /about → about.html（与 next.config.ts 的 trailingSlash: false 一致）
     "html_handling": "auto-trailing-slash",
     // 未匹配路径用 out/404.html

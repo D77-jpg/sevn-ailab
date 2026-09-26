@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { PostRow, PostRowLegend } from "@/components/post-row";
-import { Empty, SectionLabel } from "@/components/ui";
+import { Empty, SectionLabel } from "@sevn/ui";
 import { categories, getCategory } from "@/lib/site";
 import type { PostSummary } from "@/lib/writing";
 

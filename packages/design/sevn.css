@@ -1,4 +1,18 @@
-@import "tailwindcss";
+/* ══════════════════════════════════════════════════════════════════════════
+   @sevn/design — 两站共用的设计系统（SEVN AILAB / SEVN GRADLAB）
+   从 apps/sevnai 原 globals.css 抽出，内容逐字保留。
+
+   用法（每个站的 globals.css）：
+     @import "tailwindcss";
+     @import "@sevn/design/sevn.css";
+     然后只覆写强调色 --accent / --accent-hover / --accent-soft。
+
+   两站之间唯一允许的视觉差异就是强调色。字体、字号、发丝线、规格表行、
+   按钮形状都在这里定义，改一处两站同时生效。
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* 共享 React 组件（packages/ui）里用到的 Tailwind 类也要被扫描到 */
+@source "../ui/src";
 
 /* ══════════════════════════════════════════════════════════════════════════
    SEVN AILAB — Minimal Tech Design System

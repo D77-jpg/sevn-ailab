@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 
+import { themeScript } from "@sevn/ui";
+
 import { JsonLd } from "@/components/json-ld";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -63,12 +65,6 @@ export const viewport: Viewport = {
   ],
   colorScheme: "light dark",
 };
-
-/**
- * Resolves the theme before first paint so there is never a flash of the
- * wrong palette. Runs synchronously in <head>; deliberately tiny.
- */
-const themeScript = `(function(){try{var s=localStorage.getItem("sevn-theme");var t=(s==="light"||s==="dark")?s:(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="light";}})();`;
 
 export default function RootLayout({
   children,

@@ -1,6 +1,6 @@
 import { JsonLd } from "@/components/json-ld";
 import { ProjectRow } from "@/components/project-row";
-import { PageHero, SectionLabel } from "@/components/ui";
+import { PageHero, SectionLabel } from "@sevn/ui";
 import { staticPageMetadata } from "@/lib/metadata";
 import { projects, statusMeta, type ProjectStatus } from "@/lib/projects";
 import { breadcrumbSchema } from "@/lib/schema";

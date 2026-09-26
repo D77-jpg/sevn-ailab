@@ -1,0 +1,13 @@
+{
+  "name": "@sevn/design",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SEVN 设计令牌与 CSS 组件（Tailwind v4），两站共用",
+  "exports": {
+    "./sevn.css": "./sevn.css"
+  },
+  "style": "./sevn.css",
+  "files": [
+    "sevn.css"
+  ]
+}

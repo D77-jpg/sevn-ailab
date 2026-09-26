@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { JsonLd } from "@/components/json-ld";
 import { Rating } from "@/components/rating";
-import { SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@sevn/ui";
 import { pageAlternates } from "@/lib/metadata";
 import { getAllResources, getAdjacentResources, getResource } from "@/lib/resources";
 import { breadcrumbSchema, resourceSchema } from "@/lib/schema";

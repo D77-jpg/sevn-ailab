@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { Project } from "@/lib/projects";
 import { formatDate } from "@/lib/format";
-import { StatusPill } from "@/components/ui";
+import { StatusPill } from "@sevn/ui";
 
 /** A project rendered as a datasheet row — status and stack are the point. */
 export function ProjectRow({ project }: { project: Project }) {

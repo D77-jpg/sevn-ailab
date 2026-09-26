@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { JsonLd } from "@/components/json-ld";
-import { PageHero } from "@/components/ui";
+import { PageHero } from "@sevn/ui";
 import { WritingIndex, WritingList } from "@/components/writing-index";
 import { staticPageMetadata } from "@/lib/metadata";
 import { breadcrumbSchema } from "@/lib/schema";

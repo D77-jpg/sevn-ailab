@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { PostRow, PostRowLegend } from "@/components/post-row";
 import { ProjectRow } from "@/components/project-row";
-import { SectionHeader } from "@/components/ui";
+import { SectionHeader } from "@sevn/ui";
 import { projects } from "@/lib/projects";
 import { resources, resourceGroups } from "@/lib/resources";
 import { externalProps, isLive, site, socials } from "@/lib/site";

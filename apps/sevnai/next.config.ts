@@ -20,6 +20,8 @@ const isDev = process.env.NODE_ENV === "development";
 
 const nextConfig: NextConfig = {
   output: "export",
+  // Shared workspace packages ship TypeScript/TSX source, not a build.
+  transpilePackages: ["@sevn/ui"],
   images: { unoptimized: true },
   // `/about` is served from `about.html`; Cloudflare resolves that natively.
   trailingSlash: false,

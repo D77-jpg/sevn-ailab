@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* 全部令牌与组件样式来自共享设计包（packages/design/sevn.css）。
+   SEVN AILAB 使用设计包的默认强调色 Apple Blue，这里不做任何覆写。 */
+@import "@sevn/design/sevn.css";
