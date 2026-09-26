@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { crossLink } from "@sevn/ui";
+
 import { JsonLd } from "@/components/json-ld";
 import { TocInline, TocSidebar } from "@/components/toc";
 import { renderMarkdown } from "@/lib/mdx";
 import { pageAlternates } from "@/lib/metadata";
 import { articleSchema, breadcrumbSchema } from "@/lib/schema";
-import { getCategory } from "@/lib/site";
+import { getCategory, gradlab } from "@/lib/site";
 import { extractHeadings } from "@/lib/toc";
 import {
   formatDate,
@@ -140,6 +142,25 @@ export default async function PostPage({
             <div className="min-w-0 max-w-[68ch]">
               {headings.length > 2 && <TocInline headings={headings} />}
               <div className="prose">{content}</div>
+
+              {post.gradTopic && post.gradTopicTitle && (
+                <a
+                  href={crossLink(`${gradlab.url}/topics/${post.gradTopic}/`, {
+                    from: "sevnai",
+                    medium: "article_cta",
+                    content: post.slug,
+                  })}
+                  className="group mt-14 block border-t border-line pt-6"
+                >
+                  <p className="mono-xs">收窄成一个毕设题</p>
+                  <p className="mt-2.5 text-[1.0625rem] leading-snug font-medium text-ink transition-colors duration-200 group-hover:text-accent">
+                    {post.gradTopicTitle} ↗
+                  </p>
+                  <p className="mt-1.5 text-[14px] leading-relaxed text-muted">
+                    这篇的架构可以改编成一个本科 8–12 周做得完的题目。范围、创新点和验证方案写在 {gradlab.name}。
+                  </p>
+                </a>
+              )}
             </div>
 
             {headings.length > 2 && (

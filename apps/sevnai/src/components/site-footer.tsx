@@ -1,7 +1,9 @@
 import Link from "next/link";
 
+import { crossLink } from "@sevn/ui";
+
 import { BackToTop } from "@/components/back-to-top";
-import { categories, externalProps, isLive, nav, site, socials } from "@/lib/site";
+import { categories, externalProps, gradlab, isLive, nav, site, socials } from "@/lib/site";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -101,6 +103,19 @@ export function SiteFooter() {
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Sister site — the GRADLAB footer has the same line pointing here */}
+        <div className="border-t border-line py-6">
+          <a
+            href={crossLink(gradlab.url, { from: "sevnai", medium: "footer" })}
+            className="group flex items-baseline justify-between gap-4"
+          >
+            <span className="mono-xs">姊妹站</span>
+            <span className="text-[14px] text-ink-2 transition-colors duration-200 group-hover:text-accent">
+              {gradlab.name}：{gradlab.note}，把这里的项目收窄成本科做得完的题目 ↗
+            </span>
+          </a>
         </div>
 
         {/* Colophon */}

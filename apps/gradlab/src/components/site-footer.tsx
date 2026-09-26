@@ -20,8 +20,7 @@ export function SiteFooter() {
               答辩你讲。
             </p>
             <p className="mt-5 max-w-[46ch] text-[15px] text-muted">
-              {site.tagline}。SEVN AILAB 的姊妹站：那边记录完整的工程实践，
-              这里讲怎么把它收窄成一个本科做得完、答辩讲得清的题目。
+              {site.tagline}。SEVN AILAB 的姊妹站：那边记录完整的工程实践，这里讲怎么把它收窄成一个本科做得完、答辩讲得清的题目。
             </p>
           </div>
 

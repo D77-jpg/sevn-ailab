@@ -87,6 +87,18 @@ export function isLive(s: SocialLink): boolean {
   return s.href !== "#" && s.href.trim() !== "";
 }
 
+/**
+ * Sister site: SEVN GRADLAB, AI-direction graduation-project mentoring.
+ * Linked from the footer and from articles that set `gradTopic`.
+ * Every link to it goes through `crossLink` from @sevn/ui (UTM-tagged).
+ * TODO(上线前): 与 apps/gradlab/src/lib/site.ts 的 url 保持一致。
+ */
+export const gradlab = {
+  name: "SEVN GRADLAB",
+  url: "https://grad.sevnai.site",
+  note: "AI 方向毕设辅导",
+} as const;
+
 /** `target`/`rel` for outbound links; nothing for mailto: and internal ones. */
 export function externalProps(href: string) {
   return /^https?:\/\//.test(href)

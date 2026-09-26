@@ -64,18 +64,19 @@ export default function HomePage() {
         <div className="shell">
           <p className="eyebrow rise">AI 方向毕业设计辅导</p>
           <h1
-            className="rise mt-5 max-w-[14ch] font-serif text-display text-ink"
+            className="rise mt-5 font-serif text-display text-ink"
             style={{ animationDelay: "70ms" }}
           >
-            AI 毕设，先判断做不做得完。
+            {/* Break only between phrases, never inside 「先判断」. */}
+            <span className="inline-block">AI 毕设，</span>
+            <span className="inline-block">先判断</span>
+            <span className="inline-block">做不做得完。</span>
           </h1>
           <p
             className="rise mt-7 max-w-[56ch] text-lead text-muted"
             style={{ animationDelay: "140ms" }}
           >
-            只做 RAG、Agent、AIGC 这类 AI 方向。每个题目都从真实跑过的项目里收窄而来：
-            本科 8–12 周做得完，答辩时每个设计取舍你都讲得清。
-            代码你写，论文你写，答辩你讲。
+            只做 RAG、Agent、AIGC 这类 AI 方向。每个题目都从真实跑过的项目里收窄而来：本科 8–12 周做得完，答辩时每个设计取舍你都讲得清。代码你写，论文你写，答辩你讲。
           </p>
           <div
             className="rise mt-9 flex flex-wrap gap-3"
@@ -204,9 +205,7 @@ export default function HomePage() {
             </div>
           </div>
           <p className="mt-6 max-w-[68ch] text-[14px] leading-relaxed text-muted">
-            这不只是态度问题。2025 年 1 月 1 日起施行的《中华人民共和国学位法》规定，
-            学位论文被认定存在代写、剽窃、伪造等学术不端行为的，已授予的学位可以被撤销。
-            代做的风险最终落在你身上，而且没有期限。
+            这不只是态度问题。2025 年 1 月 1 日起施行的《中华人民共和国学位法》规定，学位论文被认定存在代写、剽窃、伪造等学术不端行为的，已授予的学位可以被撤销。代做的风险最终落在你身上，而且没有期限。
           </p>
         </div>
       </section>
@@ -230,19 +229,18 @@ export default function HomePage() {
         <div className="shell">
           <SectionHeader index="05" label="作者" />
           <div className="grid gap-x-12 gap-y-6 md:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] md:items-end">
-            <h2 className="max-w-[18ch] font-serif text-h2 text-ink">
-              我是 SEVN，
+            <h2 className="font-serif text-h2 text-ink">
+              <span className="inline-block">我是 SEVN，</span>
               <br />
-              自己做项目，也带同学做。
+              <span className="inline-block">自己做项目，</span>
+              <span className="inline-block">也带同学做。</span>
             </h2>
             <div className="space-y-4 text-[15px] leading-relaxed text-muted">
               <p>
-                AI 独立开发者。在 SEVN AILAB 公开记录 Agent 与 AI 产品的完整构建过程：
-                架构决策、返工和踩坑，而不只是成功的部分。
+                AI 独立开发者。在 SEVN AILAB 公开记录 Agent 与 AI 产品的完整构建过程：架构决策、返工和踩坑，而不只是成功的部分。
               </p>
               <p>
-                选题库里的题目，大多是从那些项目里收窄出来的。你可以先去看原项目的复盘，
-                再决定要不要找我。
+                选题库里的题目，大多是从那些项目里收窄出来的。你可以先去看原项目的复盘，再决定要不要找我。
               </p>
               <a
                 href={crossLink(`${sister.url}/about`, { from: "gradlab", medium: "author" })}

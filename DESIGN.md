@@ -1,5 +1,11 @@
 # Design System: SEVN AILAB
 
+> **两站共用（monorepo）**：本规范同时约束 SEVN AILAB（apps/sevnai）与 SEVN GRADLAB（apps/gradlab）。
+> 实现在 `packages/design/sevn.css`（原 `globals.css`，逐字迁移）与 `packages/ui`。
+> 两站唯一允许的视觉差异是强调色：AILAB 为 Apple Blue（#0071E3 / 深色 #2997FF），
+> GRADLAB 为绿色（#1A7F37 / 深色 #3FD46B，含义「验收通过」），在各自 `globals.css` 中覆写 `--accent*`。
+> Logo 方块中的圆点、链接、焦点色随之变化，其余一律相同。
+>
 > **V3（当前）**：Apple 式极简科技风。暖白底（#F5F5F7）、近黑墨色（#1D1D1F）、发丝线（#D2D2D7）、
 > 单一强调色 Apple Blue（#0071E3）。展示字体改为**无衬线大字号紧凑字距**（SF Pro / Geist / PingFang SC），
 > 按钮与搜索框统一 999px 胶囊，圆角克制（8/14/22px），阴影极轻，无噪点纹理。

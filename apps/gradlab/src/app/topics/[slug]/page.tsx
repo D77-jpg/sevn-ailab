@@ -71,7 +71,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
       </header>
 
       {/* Spec sheet — the same unified fields as every other topic */}
-      <section className="section pt-12 pb-0">
+      <section className="pt-12">
         <div className="shell">
           <dl className="max-w-[68ch] border-t border-line">
             {specs.map(([k, v]) => (
@@ -84,14 +84,14 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
         </div>
       </section>
 
-      <section className="section pb-0">
-        <div className="shell max-w-[calc(68ch+3rem)]">
+      <section className="pt-16 md:pt-20">
+        <div className="shell">
           <SectionLabel>为什么值得做</SectionLabel>
-          <p className="mt-6 text-[1.0625rem] leading-[1.8] text-ink-2">{topic.why}</p>
+          <p className="mt-6 max-w-[62ch] text-[1.0625rem] leading-[1.8] text-ink-2">{topic.why}</p>
         </div>
       </section>
 
-      <section className="section pb-0">
+      <section className="pt-16 md:pt-20">
         <div className="shell">
           <SectionLabel>范围</SectionLabel>
           <div className="mt-6 grid gap-px overflow-hidden border border-line bg-line md:grid-cols-2">
@@ -101,7 +101,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
         </div>
       </section>
 
-      <section className="section pb-0">
+      <section className="pt-16 md:pt-20">
         <div className="shell">
           <SectionLabel>创新点怎么写</SectionLabel>
           <p className="mt-6 max-w-[62ch] text-[15px] text-muted">
@@ -127,7 +127,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
         </div>
       </section>
 
-      <section className="section pb-0">
+      <section className="pt-16 md:pt-20">
         <div className="shell">
           <SectionLabel>验证方案</SectionLabel>
           <p className="mt-6 max-w-[62ch] text-[15px] text-muted">
@@ -149,7 +149,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
       </section>
 
       {topic.origin && (
-        <section className="section pb-0">
+        <section className="pt-16 md:pt-20">
           <div className="shell">
             <a
               href={crossLink(`${sister.url}${topic.origin.path}`, {
@@ -171,7 +171,7 @@ export default async function TopicPage({ params }: { params: Promise<Params> })
         </section>
       )}
 
-      <section id="consult" className="section">
+      <section id="consult" className="section mt-16 md:mt-24">
         <div className="shell">
           <SectionLabel>想做这个题目</SectionLabel>
           <div className="mt-8">

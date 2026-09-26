@@ -12,7 +12,8 @@
     "build:gradlab": "npm run build -w @sevn/gradlab",
     "dev:sevnai": "npm run dev -w @sevn/sevnai",
     "dev:gradlab": "npm run dev -w @sevn/gradlab",
-    "check": "npm run check -w @sevn/sevnai && npm run check -w @sevn/gradlab"
+    "check": "npm run check:links && npm run check -w @sevn/sevnai && npm run check -w @sevn/gradlab",
+    "check:links": "node scripts/check-cross-links.mjs"
   },
   "engines": {
     "node": ">=20.9"

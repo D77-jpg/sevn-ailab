@@ -21,6 +21,13 @@ export type PostFrontmatter = {
   series?: string;
   /** Optional one-line takeaway shown on the article page. */
   takeaway?: string;
+  /**
+   * Slug of the SEVN GRADLAB topic this article can be narrowed into. When
+   * set, the article ends with a quiet link to that topic page.
+   */
+  gradTopic?: string;
+  /** Title of that topic, shown in the link. */
+  gradTopicTitle?: string;
 };
 
 export type Post = PostFrontmatter & {
