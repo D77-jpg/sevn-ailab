@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+/* 与 SEVN AILAB 完全相同的设计系统（packages/design/sevn.css）。 */
+@import "@sevn/design/sevn.css";
+
+/* ── GRADLAB 与 AILAB 唯一的视觉差异：强调色 ────────────────────────────
+   AILAB 是 Apple Blue；GRADLAB 用绿色，意思是「验收通过」。
+   对比度（WCAG 2.x）：
+     浅色  #1a7f37 on #ffffff 5.08:1 · on #f5f5f7 4.66:1   → AA
+     深色  #3fd46b on #000000 10.8:1 · on #161617 9.34:1   → AAA
+   用法与 AILAB 的蓝色完全一致：链接、焦点、Logo 圆点、少量标签。 */
+:root {
+  --accent: #1a7f37;
+  --accent-hover: #146c2e;
+  --accent-soft: #e6f4ea;
+}
+
+[data-theme="dark"] {
+  --accent: #3fd46b;
+  --accent-hover: #6ee08e;
+  --accent-soft: rgb(63 212 107 / 0.14);
+}
+
+/* 「SEVN GRADLAB」比「SEVN AILAB」多两个字母：按 10/12 缩小，让它和 AILAB
+   页脚一样恰好撑满一行，而不是溢出。 */
+@layer components {
+  .wordmark--long {
+    font-size: clamp(2.7rem, 10.4vw, 7.9rem);
+  }
+}
